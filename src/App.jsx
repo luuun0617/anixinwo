@@ -8,6 +8,20 @@ import SavedList from "./components/saveList";
 import HousePublish from "./components/housePublish";
 import SavedCard from './components/savedCard';
 
+const INITIAL_TEMPLATE_DATA = {
+  id: "",
+  title: "",
+  category: "",
+  origin_price: "",
+  price: "",
+  unit: "",
+  description: "",
+  content: "",
+  is_enabled: false,
+  imageUrl: "",
+  imagesUrl: [],
+};
+
 function App() {
   const [count, setCount] = useState(0)
 

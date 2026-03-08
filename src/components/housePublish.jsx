@@ -7,7 +7,7 @@ function HousePublish() {
         <p className="m-0 h5 text-gray-400">所有已刊登物件</p>
         <button type="submit" className="btn addHouses-btn h6 m-0 ms-auto align-center d-none d-md-inline-flex">儲存物件資訊<img src="src\assets\image\Icons-correct.svg" alt="Icons-correct" className="ms-16" /></button>
       </div>
-      <div class="bg-primary-white p-36 p-md-16 mb-md-24">
+      <div className="bg-primary-white p-36 p-md-16 mb-md-24">
         {/* 物件標題 */}
         <div className="mb-24 mb-md-16">
           <label htmlFor="houseTitle" className="form-label body-2 text-gray-400">物件標題 <span className="body-2 text-system-accent">*</span></label>
@@ -154,7 +154,7 @@ function HousePublish() {
           </div>
         </div>
       </div>
-      <button type="submit" class="btn addHouses-btn h6 text-primary-500 m-0 d-block d-md-none mx-auto">儲存物件資訊<img src="src\assets\image\Icons-correct.svg" alt="Icons-correct" class="ms-16" /></button>
+      <button type="submit" className="btn addHouses-btn h6 text-primary-500 m-0 d-block d-md-none mx-auto">儲存物件資訊<img src="src\assets\image\Icons-correct.svg" alt="Icons-correct" className="ms-16" /></button>
     </section>
 
   );
