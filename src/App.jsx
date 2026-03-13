@@ -1,36 +1,22 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios';
-const API_BASE = import.meta.env.VITE_API_BASE;
-const API_PATH = import.meta.env.VITE_API_PATH;
+import {useEffect} from 'react'
+
 import './assets/all.scss';
 
 import SavedList from "./components/saveList";
 import HousePublish from "./components/housePublish";
 import SavedCard from './components/savedCard';
 
-const INITIAL_TEMPLATE_DATA = {
-  id: "",
-  title: "",
-  category: "",
-  origin_price: "",
-  price: "",
-  unit: "",
-  description: "",
-  content: "",
-  is_enabled: false,
-  imageUrl: "",
-  imagesUrl: [],
-};
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  
   useEffect (()=>{
     (async ()=>{
-      const res = await axios.get('#');
+      
     })()
   },[])
 
+  
   return (
     <>
       <div className="d-flex align-center bg-primary-100 justify-between px-12 py-20 py-md-14">

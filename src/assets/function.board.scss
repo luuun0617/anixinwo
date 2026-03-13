@@ -77,6 +77,11 @@
   color: var(--gray-300);
   border-color: var(--primary-300);
 }
+.btn-outline-act{
+  background-color: var(--primary-200);
+  border-color: var(--primary-400);
+  color: var(--gray-400);
+}
 .btn-outline:focus{
   background-color: var(--primary-200);
   border-color: var(--primary-400);

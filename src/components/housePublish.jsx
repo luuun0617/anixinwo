@@ -1,7 +1,352 @@
+import { useState,useEffect } from 'react'
+import { useForm } from "react-hook-form"
+import addJson from '../assets/CityCountyData.json';
 
 function HousePublish() {
+  const {
+      register,
+      handleSubmit,
+      watch,
+      setValue,
+      formState: {errors}
+    } = useForm({
+      defaultValues: {
+        houseType: [],
+        images: [],
+        houseRules: [],
+        furnishings: [],
+        houseAge: '',
+        rent: '',
+        hoaFee: '',
+        contactName: '',
+        tel: ''
+      },
+      mode:'onTouched'
+  });
+  
+  const onSubmit = (data) =>{
+    console.log(errors);
+    console.log(data);
+  }
+
+  const HouseTitleInput = ({register,errors,id,type,rules}) =>{
+    return (
+    <>
+      <div className="mb-24 mb-md-16">
+        <label htmlFor={id} className="form-label body-2 text-gray-400">物件標題 <span className="body-2 text-system-accent">*</span></label>
+        <input 
+        type={type}
+        id={id} placeholder="輸入物件標題" 
+        className={`form-control ${errors[id] && 'is-invalid'}` }
+        {...register(id, rules)}
+        />
+        {errors[id] && <div id="validationServerUsernameFeedback" class="invalid-feedback">請輸入物件標題</div>}
+      </div>
+    </>)
+  };
+
+  const ImageUpload = ({ register, setValue, watch, id, rules }) => {
+    const images = watch(id) || [];
+
+    const handleFileChange = (e) => {
+      const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+        const newImages = files.map((file) => ({
+          file, 
+          url: URL.createObjectURL(file), 
+          id: Math.random().toString(36).substring(2, 9)
+        }));
+        setValue(id, [...images, ...newImages], { shouldValidate: true });
+      };
+
+    const removeImage = (imgId) => {
+      const filteredImages = images.filter((img) => img.id !== imgId);
+      setValue(id, filteredImages, { shouldValidate: true });
+    };
+
   return (
-    <section>
+    <div>
+        {images.map((img) => (
+          <div key={img.id} className="image-upload me-16 mb-md-16">
+            <img src={img.url} alt="preview" className="upload-img" />
+            <button 
+              type="button" 
+              className="delete-btn" 
+              onClick={() => removeImage(img.id)}
+            >
+              <img src="src/assets/image/delete.svg" alt="img-delete" className="img-del" />
+            </button>
+          </div>
+        ))}
+        <label htmlFor={id} className="upload-box" style={{ cursor: 'pointer' }}>
+          <img src="src/assets/image/image-button.png" alt="image-button" />
+        </label>
+        <input 
+          type="file" 
+          id={id} 
+          multiple 
+          accept="image/*" 
+          className="d-none"
+          onChange={handleFileChange}
+        />
+        <input 
+          type="hidden" 
+          {...register(id, rules)} 
+        />
+    </div>
+  );
+};
+
+  const HousePinInput = ({register,errors,id,type,rules}) =>{
+    return(
+      <div className="house-pin house-pin-md flex-fill">
+        <label htmlFor={id} className="form-label body-2 text-gray-400">物件坪數 <span className="body-2 text-system-accent">*</span></label>
+        <input 
+        type={type}
+        id={id} placeholder="物件坪數" 
+        className={`form-control flex-fill ${errors[id] && 'is-invalid'}` }
+        {...register(id, rules)}
+         />
+        {errors[id] && <div id="validationServerUsernameFeedback" class="invalid-feedback">請輸入物件坪數</div>} 
+      </div>
+    )
+  }
+
+  const HouseTotalPinInput = ({register,errors,id,type,rules}) =>{
+    return(
+      <div className="flex-fill">
+        <label htmlFor={id} className="form-label body-2 text-gray-400">物件總坪數 <span className="body-2 text-system-accent">*</span></label>
+        <input 
+        type={type}
+        id={id} placeholder="物件總坪數" 
+        className={`form-control ${errors[id] && 'is-invalid'}` }
+        {...register(id, rules)}
+         />
+        {errors[id] && <div id="validationServerUsernameFeedback" class="invalid-feedback">請輸入物件總坪數</div>} 
+      </div>
+    )
+  }
+
+  const HouseType = ({register,id,watch,setValue}) =>{
+    const selectedType = watch(id);
+    const handleSingleSelect = (value) => {
+      setValue(id, value, { shouldValidate: true });
+    };
+    const types = ['整層住家','獨立套房','分租套房','雅房','商辦'];
+    return(<>
+      <div className="mb-24 mb-md-16">
+        <label htmlFor={id} className="form-label body-2 text-gray-400">物​件​類型​ <span className="body-2 text-system-accent">*</span></label>
+        <div className="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+          <div className="btn-group single-select flex-wrap" role="group" aria-label="First group">
+            {types.map((item) => (
+            <button
+              key={item}
+              type="button"
+              className={`btn me-8 mb-md-8 ${selectedType === item ? 'btn-outline-act' : 'btn-outline'}`}
+              onClick={() => handleSingleSelect(item)}
+            >
+              {item}</button>
+          ))}
+          </div>
+        </div>
+        <input type="hidden" {...register(id)} />
+      </div>
+    </>)
+  };
+
+  const watchCity = watch("city");
+  const [addressData, setAddressData] = useState([]);
+
+    // 取得地址資料
+    useEffect(() => {
+      setAddressData(addJson);
+    }, []);
+    useEffect(() => {
+      setValue("district", ""); // 當縣市改變，手動清空行政區
+    }, [watchCity, setValue]);
+
+  const SelectAdd = ({ id,register,errors,rules,children,disabled = false }) => {
+    return (
+      <>
+          <select
+            id={id}
+            className={`form-select state-style ${errors[id] && 'is-invalid'}`}
+            {...register(id, rules)}
+            disabled={disabled}
+          >
+            { children }
+          </select>
+          {errors[id] && (
+            <div className='invalid-feedback'>{errors[id]?.message}</div>
+          )}
+      </>
+    )
+  };
+
+  const HouseRules = () =>{
+    const selectedRules = watch("houseRules");
+    const rules = ['可開伙', '可養寵物', '不含管理費'];
+
+    const handleToggle = (rule) => {
+      const current = selectedRules || [];
+      const newValues = current.includes(rule) ? current.filter((r)=> r !== rule)  : [...current, rule];            
+      setValue("houseRules", newValues, { shouldValidate: true });
+    };
+
+  return (
+    <div className="mb-24 mb-md-16">
+      <label htmlFor="houseRules" className="form-label body-2 text-gray-400">其他 - 房屋守則</label>
+      <input type="hidden" {...register("houseRules")} />
+      <div className="btn-toolbar mb-3" role="toolbar">
+        <div className="btn-group me-2" role="group">
+          {rules.map((rule) => {
+              const isActive = selectedRules.includes(rule);
+              return (
+                <button
+                  key={rule}
+                  type="button"
+                  className={`btn me-8 ${isActive ? 'btn-outline-act' : 'btn-outline'}`}
+                  onClick={() => handleToggle(rule)}
+                >
+                {rule}</button>
+              );
+            })}
+        </div>
+      </div>
+    </div>
+  );
+  };
+
+  const Furnishings  = () =>{
+    const selectedFurnishings = watch("furnishings");
+    const things = ['電梯', '車位', '冰箱','桌椅','單人床','雙人床','對外窗','沙發','電視','衣櫃','網路','第四台','洗衣機','烘衣機','冷氣','熱水器'];
+
+    const handleToggle = (thing) => {
+      const current = selectedFurnishings || [];
+      const newValues = current.includes(thing) ? current.filter((t)=> t !== thing)  : [...current, thing];            
+      setValue("furnishings", newValues, { shouldValidate: true });
+      };
+
+    return (
+      <div className="mb-24 mb-md-16">
+        <label htmlFor="furnishings" className="form-label body-2 text-gray-400">其他 - 提供設備</label>
+        <input type="hidden" {...register("furnishings")} />
+        <div className="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+          <div className="furnished-list me-2 d-flex flex-wrap" role="group" aria-label="First group">
+            {things.map((thing) => {
+              const isActive = selectedFurnishings.includes(thing);
+              return (
+                <button
+                  key={thing}
+                  type="button"
+                  className={`btn me-8 mb-8 ${isActive ? 'btn-outline-act' : 'btn-outline'}`}
+                  onClick={() => handleToggle(thing)}
+                >
+                {thing}</button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  };
+  const HouseAge = ({ register, errors, id, rules }) => {
+    const ages = ['0 - 5 年', '5 - 10 年', '10 - 20 年', '20 - 30 年', '30 年以上'];
+
+    return (
+    <div className="mb-24 mb-md-16">
+      <label htmlFor={id} className="form-label body-2 text-gray-400">
+        物件屋齡 <span className="body-2 text-system-accent">*</span>
+      </label>
+      <select 
+        id={id} 
+        className={`form-select ${errors[id] && 'is-invalid'}`}
+        {...register(id, rules)}
+      >
+        <option value="">請選擇屋齡</option>
+        {ages.map((age) => (
+          <option key={age} value={age}>
+            {age}
+          </option>
+        ))}
+      </select>
+      {/* 錯誤訊息提示 */}
+      {errors[id] && (
+        <div className="invalid-feedback">
+          {errors[id]?.message || '請選擇屋齡'}
+        </div>
+      )}
+    </div>
+  );
+  };
+
+  const RentInput = ({register,errors,id,type,rules}) =>{
+    return(
+      <div className="mb-24 me-24 flex-fill mb-md-8 objectSqm-md-0">
+        <label htmlFor={id} className="form-label body-2 text-gray-400">物件租金 (月) <span className="body-2 text-system-accent">*</span></label>
+        <input 
+        type={type}
+        id={id} placeholder="輸入物件租金" 
+        className={`form-control flex-fill ${errors[id] && 'is-invalid'}` }
+        {...register(id, rules)}
+         />
+        {errors[id] && (
+        <div className="invalid-feedback">
+          {errors[id]?.message || '請輸入物件租金'}
+        </div>
+      )}
+      </div>
+    )
+  };
+
+  const HoaFeeInput = ({register,errors,id,type,rules}) =>{
+    return(
+      <div className="mb-24 flex-fill mb-md-0">
+        <label htmlFor={id} className="form-label body-2 text-gray-400">物件管理費 <span className="body-2 text-system-accent">*</span></label>
+        <input 
+        type={type}
+        id={id} placeholder="輸入物件管理費" 
+        className={`form-control ${errors[id] && 'is-invalid'}` }
+        {...register(id, rules)}
+         />
+        {errors[id] && (<div className="invalid-feedback">{errors[id]?.message || '請輸入物件管理費'}</div>)}
+      </div>
+    )
+  };
+
+  const NameInput = ({register,errors,id,type,rules}) =>{
+    return(
+      <div className="mb-24 flex-fill contact-name">
+        <label htmlFor={id} className="form-label body-2 text-gray-400">聯絡人 <span className="body-2 text-system-accent">*</span></label>
+        <input 
+        type={type}
+        id={id} placeholder="輸入聯絡人姓名" 
+        className={`form-control flex-fill ${errors[id] && 'is-invalid'}` }
+        {...register(id, rules)}
+         />
+        {errors[id] && (<div className="invalid-feedback">{errors[id]?.message || '請輸入聯絡人姓名'}</div>)}
+      </div>
+    )
+  }
+
+  const TelInput = ({register,errors,id,type,rules}) =>{
+    return(
+      <div className="mb-24 flex-fill mb-md-0">
+        <label htmlFor={id} className="form-label body-2 text-gray-400">聯絡電話 <span className="body-2 text-system-accent">*</span></label>
+        <input 
+        type={type}
+        id={id} placeholder="輸入聯絡電話" 
+        className={`form-control flex-fill ${errors[id] && 'is-invalid'}` }
+        {...register(id, rules)}
+         />
+        {errors[id] && (<div className="invalid-feedback">{errors[id]?.message || '請輸入聯絡電話'}</div>)}
+      </div>
+    )
+  }
+
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="d-flex align-center mb-40 mb-md-24">
         <img src="src\assets\image\arrow-left.svg" alt="arrow-left" className="me-24 me-md-16" />
         <p className="m-0 h5 text-gray-400">所有已刊登物件</p>
@@ -9,33 +354,49 @@ function HousePublish() {
       </div>
       <div className="bg-primary-white p-36 p-md-16 mb-md-24">
         {/* 物件標題 */}
-        <div className="mb-24 mb-md-16">
-          <label htmlFor="houseTitle" className="form-label body-2 text-gray-400">物件標題 <span className="body-2 text-system-accent">*</span></label>
-          <input type="text" className="form-control" id="houseTitle" placeholder="輸入物件標題" required />
+        <div>
+          <HouseTitleInput
+            register={register}
+            errors={errors}
+            id="houseTitle"
+            type="text"
+            rules={{ required:{
+              value:true,
+              message:'請輸入物件標題'
+            }}}
+          />
         </div>
         {/* 物件類型 */}
-        <div className="mb-24 mb-md-16">
-          <label htmlFor="objectSelectionButton" className="form-label body-2 text-gray-400">物​件​類型​ <span className="body-2 text-system-accent">*</span></label>
-          <div className="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-            <div className="btn-group single-select flex-wrap" role="group" aria-label="First group">
-              <button type="button" className="btn btn-outline me-8 mb-md-8">整層住家</button>
-              <button type="button" className="btn btn-outline me-8 mb-md-8">獨立套房</button>
-              <button type="button" className="btn btn-outline me-8 mb-md-8">分租套房</button>
-              <button type="button" className="btn btn-outline me-8">雅房</button>
-              <button type="button" className="btn btn-outline me-8">商辦</button>
-            </div>
-          </div>
+        <div>
+          <HouseType 
+            id="houseType" 
+            register={register} 
+            watch={watch} 
+            setValue={setValue} 
+          />
         </div>
         {/* 物件坪數 */}
         <div className="d-flex flex-column flex-md-row form-row mb-24 mb-md-16">
-          <div className="house-pin house-pin-md flex-fill">
-            <label htmlFor="housePin" className="form-label body-2 text-gray-400">物件坪數 <span className="body-2 text-system-accent">*</span></label>
-            <input type="text" className="form-control flex-fill" id="housePin" placeholder="物件坪數" required />
-          </div>
-          <div className="flex-fill">
-            <label htmlFor="houseTotalPin" className="form-label body-2 text-gray-400">物件總坪數 <span className="body-2 text-system-accent">*</span></label>
-            <input type="text" className="form-control" id="houseTotalPin" placeholder="物件總坪數" required />
-          </div>
+          <HousePinInput 
+            register={register}
+            errors={errors}
+            id="housePin"
+            type="text"
+            rules={{ required:{
+              value:true,
+              message:'請輸入物件坪數'
+            }}}
+          />
+          <HouseTotalPinInput 
+            register={register}
+            errors={errors}
+            id="houseTotalPin"
+            type="text"
+            rules={{ required:{
+              value:true,
+              message:'請輸入物件總坪數'
+            }}}
+          />
         </div>
         {/* 物件圖片 */}
         <div className="mb-24 mb-md-16">
@@ -57,105 +418,116 @@ function HousePublish() {
               <img src="src\assets\image\hus-4.png" alt="Image-4" className="upload-img" />
               <button type="button" className="delete-btn" id="deleteBtn"><img src="src\assets\image\delete.svg" alt="img-delete" className="img-del" /></button>
             </div>
-            <label htmlFor="file1" className="upload-box">
-              <img src="src\assets\image\image-button.png" alt="image-button" />
-            </label>
-            <input type="file" id="file1" hidden />
+            <ImageUpload 
+              id="images" 
+              register={register} 
+              setValue={setValue} 
+              watch={watch} 
+              rules={{ 
+                required: '請至少上傳一張圖片',
+                validate: (value) => value.length <= 5 || '最多只能上傳 5 張圖片'
+              }}
+            />
           </div>
         </div>
         {/* 物件地址 */}
-        <div className="mb-24 mb-md-16">
-          <label htmlFor="inputAddress" className="form-label body-2 text-gray-400">物件地址 <span className="body-2 text-system-accent">*</span></label>
+        <div className='mb-24 mb-md-16'>
+          <label htmlFor="city" className="form-label body-2 text-gray-400">物件地址 <span className="body-2 text-system-accent">*</span></label>
           <div className="d-flex flex-wrap">
-            <select id="inputCity" className="form-select state-style">
-              <option selected>縣市</option>
-              <option>台北市</option>
-              <option>台中市</option>
-              <option>台南市</option>
-              <option>高雄市</option>
-            </select>
-            <select id="inputDist" className="form-select state-style">
-              <option selected>地區</option>
-              <option>鹽埕區</option>
-              <option>鼓山區</option>
-              <option>左營區</option>
-              <option>楠梓區</option>
-            </select>
+            <SelectAdd 
+              id='city'
+              labelText='縣市'
+              errors={errors}
+              register={register}
+              rules={{
+                required: '縣市為必填'
+              }}>
+              <option value="">縣市</option>
+              {addressData.map((city) => {
+                return <option value={city.CityName} key={city.CityEngName}>{city.CityName}</option>
+              })}
+            </SelectAdd>
+            <SelectAdd id='district'
+              labelText='鄉鎮市區'
+              errors={errors}
+              register={register}
+              disabled={!watchCity}
+              rules={{
+                required: '鄉鎮市區為必填'
+              }}>
+              <option value="">地區</option>
+                {
+                  addressData.find((city) => city.CityName === watchCity)
+                    ?.AreaList?.map((area) => (
+                      <option value={area.AreaName} key={area.ZipCode}>
+                        {area.AreaName}
+                      </option>
+                    ))
+                }
+            </SelectAdd>
             <input type="text" className="form-control address-style" id="inputAddress" placeholder="輸入完整地址" required />
           </div>
         </div>
         {/* 房屋守則 */}
-        <div className="mb-24 mb-md-16">
-          <label htmlFor="houseRules" className="form-label body-2 text-gray-400">其他 - 房屋守則</label>
-          <div className="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
-            <div className="btn-group me-2" role="group" aria-label="First group">
-              <button type="button" className="btn btn-outline me-8">可開伙</button>
-              <button type="button" className="btn btn-outline me-8">可養寵物</button>
-              <button type="button" className="btn btn-outline me-8">不含管理費</button>
-            </div>
-          </div>
-        </div>
+        <HouseRules />
         {/* 提供設備 */}
-        <div className="mb-24 mb-md-16">
-          <label htmlFor="furnished" className="form-label body-2 text-gray-400">其他 - 提供設備</label>
-          <div className="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
-            <div className="furnished-list me-2 d-flex flex-wrap" role="group" aria-label="First group">
-              <button type="button" className="btn btn-outline me-8 mb-8 mb-8">電梯</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">車位</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">冰箱</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">桌椅</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">單人床</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">雙人床</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">對外窗</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">沙發</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">電視</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">衣櫃</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">網路</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">第四台</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">洗衣機</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">烘衣機</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">冷氣</button>
-              <button type="button" className="btn btn-outline me-8 mb-8">熱水器</button>
-            </div>
-          </div>
-        </div>
+        <Furnishings />
         {/* 物件屋齡 */}
-        <div className="mb-24 mb-md-16">
-          <label htmlFor="houseAge" className="form-label body-2 text-gray-400">物件屋齡 <span className="body-2 text-system-accent">*</span></label>
-          <select id="houseAge" className="form-select">
-            <option selected>請選擇屋齡</option>
-            <option>0 - 5 年</option>
-            <option>5 - 10 年</option>
-            <option>10 - 20 年</option>
-            <option>20 - 30 年</option>
-            <option>30 年以上</option>
-          </select>
-        </div>
+        <HouseAge
+          id="houseAge"
+          register={register}
+          errors={errors}
+          rules={{ required: '物件屋齡為必填項目' }}
+        />
         {/* 物件租金、管理費 */}
         <div className="d-flex flex-column form-row flex-md-row mb-md-16">
-          <div className="mb-24 me-24 flex-fill mb-md-8 objectSqm-md-0">
-            <label htmlFor="rent" className="form-label body-2 text-gray-400">物件租金 (月) <span className="body-2 text-system-accent">*</span></label>
-            <input type="text" className="form-control flex-fill" id="rent" placeholder="輸入物件租金" required />
-          </div>
-          <div className="mb-24 flex-fill mb-md-0">
-            <label htmlFor="hoaFee" className="form-label body-2 text-gray-400">物件管理費 <span className="body-2 text-system-accent">*</span></label>
-            <input type="text" className="form-control" id="hoaFee" placeholder="輸入物件管理費" required />
-          </div>
+          <RentInput
+            register={register}
+            errors={errors}
+            id="rent"
+            type="number"
+            rules={{ required:{
+              value:true,
+              message:'請輸入物件租金'
+            }}}
+          />
+          <HoaFeeInput
+            register={register}
+            errors={errors}
+            id="hoaFee"
+            type="number"
+            rules={{ required:{
+              value:true,
+              message:'請輸入物件管理費'
+            }}}
+          />
         </div>
         {/* 聯絡人、聯絡電話 */}
         <div className="d-flex flex-column form-row flex-md-row mb-md-16">
-          <div className="mb-24 flex-fill contact-name">
-            <label htmlFor="contactName" className="form-label body-2 text-gray-400">聯絡人 <span className="body-2 text-system-accent">*</span></label>
-            <input type="text" className="form-control flex-fill" id="name" placeholder="輸入聯絡人姓名" required />
-          </div>
-          <div className="mb-24 flex-fill mb-md-0">
-            <label htmlFor="contactNumber" className="form-label body-2 text-gray-400">聯絡電話 <span className="body-2 text-system-accent">*</span></label>
-            <input type="tel" className="form-control text-gray-200" id="tel" placeholder="輸入聯絡電話" required />
-          </div>
+          <NameInput 
+              register={register}
+              errors={errors}
+              id="contactName"
+              type="text"
+              rules={{ required:{
+                value:true,
+                message:'請輸入聯絡人姓名'
+              }}}
+            />
+          <TelInput 
+            register={register}
+            errors={errors}
+            id="tel"
+            type="tel"
+            rules={{ required:{
+              value:true,
+              message:'請輸入聯絡電話'
+            }}}
+          />
         </div>
       </div>
       <button type="submit" className="btn addHouses-btn h6 text-primary-500 m-0 d-block d-md-none mx-auto">儲存物件資訊<img src="src\assets\image\Icons-correct.svg" alt="Icons-correct" className="ms-16" /></button>
-    </section>
+    </form>
 
   );
 }
