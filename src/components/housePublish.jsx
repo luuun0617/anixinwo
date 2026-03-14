@@ -2,6 +2,13 @@ import { useState,useEffect } from 'react'
 import { useForm } from "react-hook-form"
 import addJson from '../assets/CityCountyData.json';
 
+import ArrowLeft from '../src/assets/image/arrow-left.svg';
+import IconsCorrect from '../src/assets/image/Icons-correct.svg';
+import Hus1 from '../src/assets/image/hus-1.png';
+import Hus2 from '../src/assets/image/hus-2.png';
+import Hus3 from '../src/assets/image/hus-3.png';
+import Hus4 from '../src/assets/image/hus-4.png';
+
 
 function HousePublish() {
   const {
@@ -349,9 +356,9 @@ function HousePublish() {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="d-flex align-center mb-40 mb-md-24">
-        <img src="src\assets\image\arrow-left.svg" alt="arrow-left" className="me-24 me-md-16" />
+        <img src={ArrowLeft} alt="arrow-left" className="me-24 me-md-16" />
         <p className="m-0 h5 text-gray-400">所有已刊登物件</p>
-        <button type="submit" className="btn addHouses-btn h6 m-0 ms-auto align-center d-none d-md-inline-flex">儲存物件資訊<img src="src\assets\image\Icons-correct.svg" alt="Icons-correct" className="ms-16" /></button>
+        <button type="submit" className="btn addHouses-btn h6 m-0 ms-auto align-center d-none d-md-inline-flex">儲存物件資訊<img src={IconsCorrect} alt="Icons-correct" className="ms-16" /></button>
       </div>
       <div className="bg-primary-white p-36 p-md-16 mb-md-24">
         {/* 物件標題 */}
@@ -404,19 +411,19 @@ function HousePublish() {
           <label htmlFor="formFile" className="form-label body-2 text-gray-400">物件圖片 <span className="body-2 text-system-accent">*</span></label>
           <div className="d-flex flex-wrap">
             <div className="image-upload me-16 mb-md-16">
-              <img src="src\assets\image\hus-1.png" alt="hus-1" className="upload-img" />
+              <img src={Hus1} alt="hus-1" className="upload-img" />
               <button type="button" className="delete-btn " id="deleteBtn"><img src="src\assets\image\delete.svg" alt="img-delete" className="img-del" /></button>
             </div>
             <div className="image-upload me-16 mb-md-16">
-              <img src="src\assets\image\hus-2.png" alt="hus-2" className="upload-img" />
+              <img src={Hus2} alt="hus-2" className="upload-img" />
               <button type="button" className="delete-btn" id="deleteBtn"><img src="src\assets\image\delete.svg" alt="img-delete" className="img-del" /></button>
             </div>
             <div className="image-upload me-16 mb-md-16">
-              <img src="src\assets\image\hus-3.png" alt="Image-3" className="upload-img" />
+              <img src={Hus3} alt="Image-3" className="upload-img" />
               <button type="button" className="delete-btn" id="deleteBtn"><img src="src\assets\image\delete.svg" alt="img-delete" className="img-del" /></button>
             </div>
             <div className="image-upload me-16 mb-md-16">
-              <img src="src\assets\image\hus-4.png" alt="Image-4" className="upload-img" />
+              <img src={Hus4} alt="Image-4" className="upload-img" />
               <button type="button" className="delete-btn" id="deleteBtn"><img src="src\assets\image\delete.svg" alt="img-delete" className="img-del" /></button>
             </div>
             <ImageUpload 
