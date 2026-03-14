@@ -2,12 +2,12 @@ import { useState,useEffect } from 'react'
 import { useForm } from "react-hook-form"
 import addJson from '../assets/CityCountyData.json';
 
-import ArrowLeft from '../src/assets/image/arrow-left.svg';
-import IconsCorrect from '../src/assets/image/Icons-correct.svg';
-import Hus1 from '../src/assets/image/hus-1.png';
-import Hus2 from '../src/assets/image/hus-2.png';
-import Hus3 from '../src/assets/image/hus-3.png';
-import Hus4 from '../src/assets/image/hus-4.png';
+import ArrowLeft from '../assets/image/arrow-left.svg';
+import IconsCorrect from '../assets/image/Icons-correct.svg';
+import Hus1 from '../assets/image/hus-1.png';
+import Hus2 from '../assets/image/hus-2.png';
+import Hus3 from '../assets/image/hus-3.png';
+import Hus4 from '../assets/image/hus-4.png';
 
 
 function HousePublish() {
