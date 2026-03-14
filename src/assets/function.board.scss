@@ -19,6 +19,14 @@
 }
 .icon-title{
   margin-right: 16px;
+  width: 20px;
+  height: 20px;
+  transition: filter 0.3s ease;
+  filter: invert(31%) sepia(8%) saturate(4%) hue-rotate(332deg) brightness(99%) contrast(88%);
+}
+.list-group-item.active .icon-title {
+  transition: filter 0.2s ease;
+  filter: invert(71%) sepia(42%) saturate(438%) hue-rotate(358deg) brightness(95%) contrast(82%);
 }
 .list-group-flush>.list-group-item:last-child{
   border-bottom-width: 2px;
